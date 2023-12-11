@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="UpFusion is a system that can perform novel view synthesis of an object given a sparse set of reference images without corresponding pose information.">
+  <meta name="keywords" content="UpFusion, 3D, Diffusion, Unposed, Sparse, Novel View Synthesis">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UpFusion: Novel View Diffusion from Unposed Sparse View Observations</title>
+
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.ico">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">UpFusion: Novel View Diffusion from Unposed Sparse View Observations</h1>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://bharathrajn.com" target="_blank">Bharath Raj Nagoor Kani</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="http://hsinyinglee.com/" target="_blank">Hsin-Ying Lee</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="http://www.stulyakov.com/" target="_blank">Sergey Tulyakov</a><sup>2</sup>,
+            </span>
+            <span class="author-block">
+              <a href="http://shubhtuls.github.io/" target="_blank">Shubham Tulsiani</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Carnegie Mellon University,</span>
+            <span class="author-block"><sup>2</sup>Snap Research</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- Arxiv Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- GitHub Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark" target="_blank">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teaser GIF -->
+<!-- <img src="./static/images/231122_co3d_gifs_v2/teaser.gif" alt="temp_alt_text" class="img-center" /> -->
+<!-- <span>
+  <img src="./static/images/aggregated.gif" alt="agg_gif" class="img-center" />
+</span> -->
+
+<div class="container is-max-desktop teaser-width teaser-reduce-top-margin teaser-margin-padding">
+  <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+    <source src="static/images/aggregated.mp4" type="video/mp4">
+  </video>
+</div>
+
+<!-- <div class="columns is-desktop is-fluid">
+  <div class="column is-4"></div>
+  <div class="column">
+    <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="50%">
+      <source src="static/images/aggregated.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="column is-4"></div>
+</div> -->
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+        </div>
+      </div>
+      <h2 class="subtitle has-text-centered">
+        <b>UpFusion</b> can create a 3D asset of an object from <b>unposed</b> sparse-view images.
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_bicycle_001_1V.mp4" type="video/mp4">
+          </video>
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_apple_005_3V.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_bowl_003_6V.mp4" type="video/mp4">
+          </video>
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_broccoli_001_3V.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_laptop_001_3V.mp4" type="video/mp4">
+          </video>
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_keyboard_005_6V.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_car_003_1V.mp4" type="video/mp4">
+          </video>
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_bench_002_3V.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_suitcase_001_3V.mp4" type="video/mp4">
+          </video>
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_pizza_003_1V.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="item">
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_tv_001_3V.mp4" type="video/mp4">
+          </video>
+          <video id="teaser" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="static/images/231211_carousel_vids/CO3D_toaster_003_3V.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We propose UpFusion, a system that can perform novel view synthesis and infer 3D representations for an object given a sparse set of reference images <b>without</b> corresponding pose information. 
+          </p>
+          <p>
+            Current sparse-view 3D inference methods typically rely on camera poses to geometrically aggregate information from input views, but are not robust in-the-wild when such information is unavailable/inaccurate. In contrast, UpFusion sidesteps this requirement by learning to implicitly leverage the available images as context in a conditional generative model for synthesizing novel views.
+          </p>
+          <p>
+            We incorporate two complementary forms of conditioning into diffusion models for leveraging the input views: a) via inferring query-view aligned features using a scene-level transformer, b) via intermediate attentional layers that can directly observe the input image tokens. We show that this mechanism allows generating high-fidelity novel views while improving the synthesis quality given additional (unposed) images. 
+          </p>
+          <p>
+            We evaluate our approach on the Co3Dv2 and Google Scanned Objects datasets and demonstrate the benefits of our method over pose-reliant sparse-view methods as well as single-view methods that cannot leverage additional views. Finally, we also show that our learned model can generalize beyond the training categories and even allow reconstruction from self-captured images of generic objects in-the-wild.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Method</h2>
+        <img src="./static/images/diffusion_diag.png" alt="upfusion2d_method" style="width:80%;" class="img-center" />
+        <div class="content has-text-justified">
+          <p>
+            Our diffusion model learns to generate novel views of an object by leveraging the internal representations of UpSRT as condition information. For more details, please refer to our paper.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results</h2>
+        <h3 class="title is-4">Novel View Synthesis on Co3Dv2</h3>
+        <div class="content has-text-justified">
+          <p>
+            Here, we compare UpFusion 3D to competitive sparse-view baselines on the Co3Dv2 dataset. Please use the dropdown menu to compare against different methods.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body">
+    <img src="./static/images/231122_co3d_gifs_v2/umbrella_003_6V.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_co3d_gifs_v2/motorcycle_001_3V.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_co3d_gifs_v2/cake_005_6V.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_co3d_gifs_v2/backpack_003_3V.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_co3d_gifs_v2/bench_001_3V.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_co3d_gifs_v2/teddybear_003_6V.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_co3d_gifs_v2/wineglass_005_3V.gif" alt="temp_alt_text" class="img-center" />
+  </div>
+</section> -->
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered is-mobile">
+      <!-- Input images -->
+      <div class="column is-4">
+        <div style="text-align: center; padding-bottom: 8px;"><h4 class="title is-4 is-size-6-mobile">Input Images</h4></div>
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_wineglass_005_3V.png" alt="co3d_input_1" />
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_umbrella_003_6V.png" alt="co3d_input_2" />
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_motorcycle_001_3V.png" alt="co3d_input_3" />
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_cake_005_6V.png" alt="co3d_input_4" />
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_backpack_003_3V.png" alt="co3d_input_5" />
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_bench_001_3V.png" alt="co3d_input_6" />
+        <img src="./static/images/231211_co3d_data/input_imgs/INP_teddybear_003_6V.png" alt="co3d_input_7" />
+      </div>
+
+      <!-- UpFusion 3D -->
+      <div class="column is-4">
+        <div style="text-align: center; padding-bottom: 8px;"><h4 class="title is-4 is-size-6-mobile">UpFusion 3D</h4></div>
+        <video id="co3d-up3d-1" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_wineglass_005_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-up3d-2" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_umbrella_003_6V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-up3d-3" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_motorcycle_001_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-up3d-4" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_cake_005_6V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-up3d-5" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_backpack_003_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-up3d-6" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_bench_001_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-up3d-7" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/UpFusion3D_teddybear_003_6V.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <!-- Other video -->
+      <div class="column is-4">
+        
+        <div style="text-align: center;">
+          <span id="co3d-dropdown" class="dropdown is-right">
+            <div class="dropdown-trigger">
+              <button class="button comparisons-button-margin" aria-haspopup="true" aria-controls="dropdown-menu3">
+                <h4 id="co3d-other-title" class="title is-4 is-size-6-mobile comparisons-title-margin" style="margin-bottom: 2px;">Ground Truth</h4>
+                <span class="icon is-small">
+                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu3" role="menu" style="text-align: left;">
+              <div class="dropdown-content">
+                <a id="co3d-relsf" class="dropdown-item co3d-methods">
+                  SparseFusion (w/ RelPose++)
+                </a>
+                <a id="co3d-upsrt" class="dropdown-item co3d-methods">
+                  UpSRT
+                </a>
+                <a id="co3d-up2d" class="dropdown-item co3d-methods">
+                  UpFusion 2D
+                </a>
+                <a id="co3d-gt" class="dropdown-item co3d-methods is-active">
+                  Ground Truth
+                </a>
+              </div>
+            </div>
+          </span>
+        </div>
+        
+        <video id="co3d-other-1" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_wineglass_005_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-other-2" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_umbrella_003_6V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-other-3" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_motorcycle_001_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-other-4" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_cake_005_6V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-other-5" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_backpack_003_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-other-6" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_bench_001_3V.mp4" type="video/mp4">
+        </video>
+        <video id="co3d-other-7" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_co3d_data/method_vids/GT_teddybear_003_6V.mp4" type="video/mp4">
+        </video>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h3 class="title is-4">Novel View Synthesis on GSO</h3>
+        <div class="content has-text-justified">
+          <p>
+            Here, we compare UpFusion 3D (while using six input views) to competitive single-view baselines, and one sparse-view baseline on the GSO dataset. Please use the dropdown menu to compare against different methods.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="hero is-light is-small">
+  <div class="hero-body">
+    <img src="./static/images/231122_gso_gifs_v2/gso_462.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_gso_gifs_v2/gso_382.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_gso_gifs_v2/gso_596.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_gso_gifs_v2/gso_411.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_gso_gifs_v2/gso_858.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_gso_gifs_v2/gso_331.gif" alt="temp_alt_text" class="img-center" />
+    <img src="./static/images/231122_gso_gifs_v2/gso_166.gif" alt="temp_alt_text" class="img-center" />
+  </div>
+</section> -->
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered is-mobile">
+      <!-- Input images -->
+      <div class="column is-4">
+        <div style="text-align: center; padding-bottom: 8px;"><h4 class="title is-4 is-size-6-mobile">Input Images</h4></div>
+        <img src="./static/images/231211_gso_data/input_imgs/INP_462.png" alt="co3d_input_1" />
+        <img src="./static/images/231211_gso_data/input_imgs/INP_382.png" alt="co3d_input_2" />
+        <img src="./static/images/231211_gso_data/input_imgs/INP_596.png" alt="co3d_input_3" />
+        <img src="./static/images/231211_gso_data/input_imgs/INP_411.png" alt="co3d_input_4" />
+        <img src="./static/images/231211_gso_data/input_imgs/INP_858.png" alt="co3d_input_5" />
+        <img src="./static/images/231211_gso_data/input_imgs/INP_331.png" alt="co3d_input_6" />
+        <img src="./static/images/231211_gso_data/input_imgs/INP_166.png" alt="co3d_input_7" />
+      </div>
+
+      <!-- UpFusion 3D -->
+      <div class="column is-4">
+        <div style="text-align: center; padding-bottom: 8px;"><h4 class="title is-4 is-size-6-mobile">UpFusion (6V)</h4></div>
+        <video id="gso-up3d-1" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_462.mp4" type="video/mp4">
+        </video>
+        <video id="gso-up3d-2" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_382.mp4" type="video/mp4">
+        </video>
+        <video id="gso-up3d-3" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_596.mp4" type="video/mp4">
+        </video>
+        <video id="gso-up3d-4" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_411.mp4" type="video/mp4">
+        </video>
+        <video id="gso-up3d-5" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_858.mp4" type="video/mp4">
+        </video>
+        <video id="gso-up3d-6" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_331.mp4" type="video/mp4">
+        </video>
+        <video id="gso-up3d-7" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/UpFusion_6V_166.mp4" type="video/mp4">
+        </video>
+      </div>
+
+      <!-- Other video -->
+      <div class="column is-4">
+
+        <div style="text-align: center;">
+          <span id="gso-dropdown" class="dropdown is-right">
+            <div class="dropdown-trigger">
+              <button class="button comparisons-button-margin" aria-haspopup="true" aria-controls="dropdown-menu3">
+                <h4 id="gso-other-title" class="title is-4 is-size-6-mobile" style="margin-bottom: 2px;">Ground Truth</h4>
+                <span class="icon is-small">
+                  <i class="fas fa-angle-down" aria-hidden="true"></i>
+                </span>
+              </button>
+            </div>
+            <div class="dropdown-menu" id="dropdown-menu3" role="menu" style="text-align: left;">
+              <div class="dropdown-content">
+                <a id="gso-z123s" class="dropdown-item gso-methods">
+                  Zero-1-to-3 (SJC)
+                </a>
+                <a id="gso-z123t" class="dropdown-item gso-methods">
+                  Zero-1-to-3 (TS)
+                </a>
+                <a id="gso-12345" class="dropdown-item gso-methods">
+                  One-2-3-45
+                </a>
+                <a id="gso-up3d1v" class="dropdown-item gso-methods">
+                  UpFusion (1V)
+                </a>
+                <a id="gso-forge" class="dropdown-item gso-methods">
+                  FORGE (6V)
+                </a>
+                <a id="gso-gt" class="dropdown-item gso-methods is-active">
+                  Ground Truth
+                </a>
+              </div>
+            </div>
+          </span>
+        </div>
+        
+        <video id="gso-other-1" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_462.mp4" type="video/mp4">
+        </video>
+        <video id="gso-other-2" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_382.mp4" type="video/mp4">
+        </video>
+        <video id="gso-other-3" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_596.mp4" type="video/mp4">
+        </video>
+        <video id="gso-other-4" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_411.mp4" type="video/mp4">
+        </video>
+        <video id="gso-other-5" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_858.mp4" type="video/mp4">
+        </video>
+        <video id="gso-other-6" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_331.mp4" type="video/mp4">
+        </video>
+        <video id="gso-other-7" autoplay="" muted="" loop="" playsinline="" height="100%">
+            <source src="./static/images/231211_gso_data/method_vids/GT_166.mp4" type="video/mp4">
+        </video>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{upfusion2023,
+  author    = {Nagoor Kani, Bharath Raj and Lee, Hsin-Ying and Tulyakov, Sergey and Tulsiani, Shubham},
+  title     = {UpFusion: Novel View Diffusion from Unposed Sparse View Observations},
+  journal   = {arxiv},
+  year      = {2023},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Website template was borrowed from <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
